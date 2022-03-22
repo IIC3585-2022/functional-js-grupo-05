@@ -1,8 +1,10 @@
 const _ = require("lodash");
+const readline = require("readline");
 
-const start_msg = "Juego inicializado con jugadores";
-const turn_msg = "Ingrese lanzamientos de";
-const end_msg = "El juego ha finalizado, un jugador ha llegado a 0 puntos. Felicidades por ganar";
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 const ingresar_jugada = () => undefined;
 
@@ -13,13 +15,13 @@ const play_game = (...players) =>
   const gamers = init_game(players);
   
   // Start game msg
-  msg_curried(start_msg)(...players);
+  msg_curried("Juego inicializado con jugadores")(...players);
 
   // Game loop
-  msg_curried(turn_msg)(players[0]);
+  const winner = game_loop(gamers)(0);
 
   // Game ending
-  msg_curried(end_msg)(players[1]);
+  msg_curried("El juego ha finalizado, un jugador ha llegado a 0 puntos. Felicidades por ganar")(winner[0]);
 };
 
 const msg_curried = (msg) =>
@@ -29,4 +31,20 @@ const msg_curried = (msg) =>
   };
 };
 
+const min_score = (players) => {
+  return players.filter(player => player[1] == 0);
+};
+
+const game_loop = (players) => {
+  return (turn) => {
+    rl.question("Ingrese lanzamientos de " + players[turn][0], (plays) => {
+      players[turn] = ingresar_jugada(players[turn], plays);
+      rl.close();
+    });
+    const winner = min_score(players);
+    winner.length == 1 ? winner[0] : game_loop(players)((turn + 1)% players.length);
+  };
+};
+
 play_game('Ema', 'Juan');
+//game_loop([]);
