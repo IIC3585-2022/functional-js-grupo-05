@@ -17,18 +17,22 @@ const init_game = (players) => {
     return abuild(players, x=>[x, 501])
  } ; 
 
-const play_game = (...players) => 
+const play_game = async (...players) => 
 {
   const gamers = init_game(players);
-  
+  console.log(gamers);
   // Start game msg
   msg_curried("Juego inicializado con jugadores")(...players);
 
   // Game loop
-  const winner = game_loop(gamers)(0);
+  game_loop(gamers)(0).then((winner) => {
+    console.log("TAMo bien??"); console.log(winner);
+    msg_curried("El juego ha finalizado, un jugador ha llegado a 0 puntos. Felicidades por ganar")(winner[0]);
+    process.exit(0);
+  });
 
   // Game ending
-  msg_curried("El juego ha finalizado, un jugador ha llegado a 0 puntos. Felicidades por ganar")(winner[0]);
+  //process.exit(0);
 };
 
 const msg_curried = (msg) =>
@@ -43,13 +47,14 @@ const min_score = (players) => {
 };
 
 const game_loop = (players) => {
-  return (turn) => {
-    rl.question("Ingrese lanzamientos de " + players[turn][0], (plays) => {
-      players[turn] = ingresar_jugada(players[turn], plays);
-      rl.close();
-    });
-    const winner = min_score(players);
-    winner.length == 1 ? winner[0] : game_loop(players)((turn + 1)% players.length);
+  return async (turn) => {
+    return await new Promise(plays => rl.question("Ingrese lanzamientos de " + players[turn][0] + " ", (plays) => {
+      players[turn] = ingresar_jugada(players[turn][0], players[turn][1], JSON.parse(plays));
+      const winner = min_score(players);
+      print_scores(players);
+      console.log("winner:"); console.log(winner);
+      return winner.length == 1 ? winner[0] : game_loop(players)((turn + 1)% players.length);
+    }));
   };
 };
 
@@ -69,6 +74,12 @@ const get_score = (pActual, throws) => {
     })
     return winner ? 0 : pActual;
 }; 
+
+const print_scores = (players) => {
+  players.forEach(player => {
+    console.log("Puntaje: " + player[1]);
+  })
+};
 
 play_game('Ema', 'Juan');
 //game_loop([]);
