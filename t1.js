@@ -8,14 +8,10 @@ const abuild = (list_, f) => list_.map(f);
 
 const init_game = (players) => abuild(players, x => [x, 501]); 
 
-const play_game = async (...players) => 
-{
+const play_game = async (...players) => {
   const gamers = init_game(players);
-
   msg_curried("Juego inicializado con jugadores")(...players);
-
   const winner = await game_loop(gamers)(0);
-
   msg_curried("El juego ha finalizado, un jugador ha llegado a 0 puntos. Felicidades por ganar")(winner[0]);
 };
 
@@ -46,7 +42,6 @@ const get_input = (msg) => {
 };
 
 const get_score = (pActual, throws) => {
-
     let winner = false;
     throws.map(x => {
         x == 'DB'
