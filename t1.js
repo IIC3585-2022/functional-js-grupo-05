@@ -3,9 +3,7 @@ const readline = require("readline");
 
 
 const ingresar_jugada = (player, score, plays) => [player, get_score(score, plays)];
-
 const abuild = (list_, f) => list_.map(f);
-
 const init_game = (players) => abuild(players, x => [x, 501]); 
 
 const play_game = async (...players) => {
@@ -16,7 +14,6 @@ const play_game = async (...players) => {
 };
 
 const msg_curried = (msg) => (...players) => console.log(msg + " " + players.reduce((acc, player) => acc + ", " + player));
-
 const min_score = (players) => players.filter(player => player[1] == 0);
 
 const game_loop = (players) => {
@@ -62,4 +59,3 @@ async function init_players(){
 }
 
 init_players()
-
