@@ -1,6 +1,4 @@
-const _ = require("lodash");
 const readline = require("readline");
-
 
 const ingresar_jugada = (player, score, plays) => [player, get_score(score, plays)];
 const abuild = (list_, f) => list_.map(f);
