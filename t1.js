@@ -17,13 +17,19 @@ const min_score = (players) => players.filter(player => player[1] == 0);
 const game_loop = (players) => {
   return async (turn) => {
     const plays = await get_input("\nIngrese lanzamientos de " + players[turn][0] + ": ");
-    players[turn] = ingresar_jugada(players[turn][0], players[turn][1], JSON.parse(plays));
-    const winner = min_score(players);
-    print_scores(players)
-    return winner.length == 1 ? winner[0] : game_loop(players)((turn + 1)% players.length);
+    const new_player = ingresar_jugada(players[turn][0], players[turn][1], JSON.parse(plays));
+    const updated_players = update_players(players)(players[turn])(new_player);
+    const winner = min_score(updated_players);
+    print_scores(updated_players)
+    return winner.length == 1 ? winner[0] : game_loop(updated_players)((turn + 1)% players.length);
   };
 };
 
+const update_players = (players) => (old_player) => (new_player) => {
+  const updated_players = [...players];
+  updated_players[players.indexOf(old_player)] = new_player;
+  return updated_players;
+};
 const get_input = (msg) => {
   const rl = readline.createInterface({
     input: process.stdin,
